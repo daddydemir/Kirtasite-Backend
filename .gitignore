@@ -16,5 +16,5 @@ go.work
 
 /migrations/
 /handlers/
-config
+
 /repositories/
