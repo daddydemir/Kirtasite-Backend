@@ -6,6 +6,12 @@ import (
 	//"gorm.io/gorm/clause"
 )
 
+func GetUserById(userId string) models.User {
+	var user models.User
+	config.DB.Find(&user, "id = ?", userId)
+	return user
+}
+
 func UserGetAll() []models.User {
 	var users []models.User
 	// ilişkilerini de getiriyor
@@ -16,4 +22,12 @@ func UserGetAll() []models.User {
 
 func AddUser(user models.User) {
 	config.DB.Create(&user)
+}
+
+func DeleteUser(user models.User) {
+	config.DB.Delete(&user)
+}
+
+func UpdateUser(user models.User) {
+	config.DB.Save(&user)
 }

@@ -5,8 +5,16 @@ import (
 	"demir/models"
 )
 
-func FileGetByUserId() []models.File {
+func FileByUserId(userId string) []models.File {
 	var files []models.File
-	config.DB.Find(&files, "user_id = ?", "9")
+	config.DB.Find(&files, "user_id = ?", userId)
 	return files
+}
+
+func FileDelete(fileId string) {
+	config.DB.Delete(models.File{}, "id = ?", fileId)
+}
+
+func FileAdd(file models.File) {
+	config.DB.Create(&file)
 }
