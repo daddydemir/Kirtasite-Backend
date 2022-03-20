@@ -3,6 +3,7 @@ package repositories
 import (
 	"demir/config"
 	"demir/models"
+	"demir/security"
 )
 
 func StationeryGetAll() []models.Stationery {
@@ -18,6 +19,7 @@ func StationeryGetById(stationeryId string) models.Stationery {
 }
 
 func StationeryAdd(stationery models.Stationery) {
+	stationery.Password = security.HashPassword(stationery.Password)
 	config.DB.Create(&stationery)
 }
 

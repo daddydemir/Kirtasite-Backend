@@ -3,6 +3,7 @@ package repositories
 import (
 	"demir/config"
 	"demir/models"
+	"demir/security"
 	//"gorm.io/gorm/clause"
 )
 
@@ -21,6 +22,7 @@ func UserGetAll() []models.User {
 }
 
 func AddUser(user models.User) {
+	user.Password = security.HashPassword(user.Password)
 	config.DB.Create(&user)
 }
 
