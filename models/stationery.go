@@ -2,12 +2,12 @@ package models
 
 type Stationery struct {
 	Id          int     `json:"id"`
-	RoleId      int     `json:"role_id"`
-	CompanyName string  `json:"company_name"`
-	Password    string  `json:"password"`
-	ImagePath   string  `json:"image_path"`
-	Mail        string  `json:"mail"`
-	TelNo       string  `json:"tel_no"`
-	Address     string  `json:"address"`
-	Score       float32 `json:"score"`
+	RoleId      int     `json:"role_id" validate:"required"`
+	CompanyName string  `json:"company_name" validate:"required,min=5"`
+	Password    string  `json:"password" validate:"required,min=8"`
+	ImagePath   string  `json:"image_path" validate:"required,url"`
+	Mail        string  `json:"mail" validate:"required,email"`
+	TelNo       string  `json:"tel_no" validate:"required,len=9"`
+	Address     string  `json:"address" validate:"required"`
+	Score       float32 `json:"score" validate:"required,gt=0,lt=11"`
 }

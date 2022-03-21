@@ -3,6 +3,7 @@ package handlers
 import (
 	"demir/models"
 	"demir/repositories"
+	"demir/validations"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -54,7 +55,12 @@ func AddStationery(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &stationery)
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	repositories.StationeryAdd(stationery)
-	json.NewEncoder(w).Encode("Added")
+	data, err := validations.StationeryValidation(stationery)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusCreated)
+		repositories.StationeryAdd(stationery)
+	}
+	json.NewEncoder(w).Encode(data)
 }

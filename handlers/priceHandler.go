@@ -3,6 +3,7 @@ package handlers
 import (
 	"demir/models"
 	"demir/repositories"
+	"demir/validations"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -29,9 +30,14 @@ func PriceAdd(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &price)
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	repositories.PriceAdd(price)
-	json.NewEncoder(w).Encode("Added")
+	data, err := validations.PriceValidation(price)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusCreated)
+		repositories.PriceAdd(price)
+	}
+	json.NewEncoder(w).Encode(data)
 }
 
 func PriceDelete(w http.ResponseWriter, r *http.Request) {

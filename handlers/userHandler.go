@@ -4,6 +4,7 @@ import (
 	"demir/config"
 	"demir/models"
 	"demir/repositories"
+	"demir/validations"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -35,9 +36,16 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &user)
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	repositories.AddUser(user)
-	json.NewEncoder(w).Encode("Added")
+
+	data, err := validations.UserValidation(user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusCreated)
+		repositories.AddUser(user)
+	}
+	json.NewEncoder(w).Encode(data)
+
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
