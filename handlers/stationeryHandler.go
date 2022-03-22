@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"demir/cloudinary"
 	"demir/models"
 	"demir/repositories"
 	"demir/validations"
@@ -55,6 +56,7 @@ func AddStationery(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &stationery)
 	w.Header().Set("Content-Type", "application/json")
+	stationery.ImagePath = "https://res.cloudinary.com/dpdlwo6vi/image/upload/v1647981518/1647981517.png"
 	data, err := validations.StationeryValidation(stationery)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -63,4 +65,22 @@ func AddStationery(w http.ResponseWriter, r *http.Request) {
 		repositories.StationeryAdd(stationery)
 	}
 	json.NewEncoder(w).Encode(data)
+}
+
+func UpdateSImage(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["id"]
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+	}
+	url, err := cloudinary.UploadToCloudinary(file)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+	}
+	repositories.UpdateSImage(url, key)
+	w.WriteHeader(http.StatusAccepted)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Başarıyla güncellendi"})
 }

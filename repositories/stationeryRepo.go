@@ -30,3 +30,9 @@ func StationeryUpdate(stationery models.Stationery) {
 func StationeryDelete(stationeryId string) {
 	config.DB.Delete(models.Stationery{}, "id = ?", stationeryId)
 }
+
+func UpdateSImage(url string, stationeryId string) {
+	var stationery models.Stationery = StationeryGetById(stationeryId)
+	stationery.ImagePath = url
+	config.DB.Save(&stationery)
+}

@@ -10,6 +10,7 @@ func MainRouting() *mux.Router {
 	r.HandleFunc("/api/users/{id}", GetUserById).Methods("GET")
 	r.HandleFunc("/api/users/{id}", DeleteUser).Methods("DELETE")
 	r.HandleFunc("/api/users/{id}", UpdateUser).Methods("PUT")
+	r.HandleFunc("/api/users/{id}", UpdateImage).Methods("POST")
 
 	// roles
 	r.HandleFunc("/api/roles", GetAllRoles).Methods("GET")
@@ -20,6 +21,7 @@ func MainRouting() *mux.Router {
 	r.HandleFunc("/api/stationery/{id}", UpdateStationery).Methods("PUT")
 	r.HandleFunc("/api/stationery/{id}", DeleteStationery).Methods("DELETE")
 	r.HandleFunc("/api/stationery/", AddStationery).Methods("POST")
+	r.HandleFunc("/api/stationery/{id}", UpdateSImage).Methods("POST")
 
 	// files
 	r.HandleFunc("/api/files/{id}", GetFileByUserId).Methods("GET")

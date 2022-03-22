@@ -33,3 +33,9 @@ func DeleteUser(user models.User) {
 func UpdateUser(user models.User) {
 	config.DB.Save(&user)
 }
+
+func UpdateImage(url string, userId string) {
+	var user models.User = GetUserById(userId)
+	user.ImagePath = url
+	config.DB.Save(&user)
+}
