@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"demir/cloud"
 	"demir/models"
 	"demir/repositories"
 	"demir/validations"
 	"encoding/json"
-	"io/ioutil"
+	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -21,14 +23,37 @@ func GetFileByUserId(w http.ResponseWriter, r *http.Request) {
 }
 
 func FileAdd(w http.ResponseWriter, r *http.Request) {
-	var file models.File
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	json.Unmarshal(reqBody, &file)
 	w.Header().Set("Content-Type", "application/json")
+	content := r.ContentLength
+	if content >= 1024*1024*5 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"message": "Dosya boyutu 5 MB'ı geçmemelidir"})
+		return
+	}
+
+	myfile, header, _ := r.FormFile("file")
+	defer myfile.Close()
+
+	file := models.File{}
+	file.Id, _ = strconv.Atoi(r.FormValue("id"))
+	file.UserId, _ = strconv.Atoi(r.FormValue("user_id"))
+	if r.FormValue("private") == "true" {
+		file.Private = true
+	} else {
+		file.Private = false
+	}
+
 	data, err := validations.FileValidation(file)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 	} else {
+		path, folder, err := cloud.UploadFile(myfile, header)
+		if err != nil {
+			fmt.Println("Servis hatası - ", err.Error())
+			return
+		}
+		file.FilePath = path
+		file.FolderId = folder
 		w.WriteHeader(http.StatusCreated)
 		file.CreatedDate = time.Now()
 		repositories.FileAdd(file)
