@@ -36,3 +36,14 @@ func UpdateSImage(url string, stationeryId string) {
 	stationery.ImagePath = url
 	config.DB.Save(&stationery)
 }
+
+func StationeryByName(companyName string) (models.Stationery, bool) {
+	var stationery models.Stationery
+	config.DB.Find(&stationery, "company_name = ?", companyName)
+	if stationery.CompanyName == "" {
+		return models.Stationery{}, false
+	} else {
+		return stationery, true
+	}
+
+}

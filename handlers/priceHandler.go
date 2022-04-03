@@ -3,6 +3,7 @@ package handlers
 import (
 	"demir/models"
 	"demir/repositories"
+	"demir/service"
 	"demir/validations"
 	"encoding/json"
 	"io/ioutil"
@@ -14,53 +15,113 @@ import (
 
 func GetAllPrices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(repositories.GetAllPrices())
+	token := r.Header["Authorization"]
+	status, message := service.GetAllPricesService(token[0])
+	if status {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(repositories.GetAllPrices())
+	} else {
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
+	}
 }
 
 func PriceById(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	key := vars["id"]
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(repositories.PriceById(key))
+	token := r.Header["Authorization"]
+	status, message := service.PriceByIdService(token[0])
+	if status {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(repositories.PriceById(key))
+	} else {
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
+	}
+
 }
 
 func PriceAdd(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	var price models.Price
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &price)
-	w.Header().Set("Content-Type", "application/json")
-	data, err := validations.PriceValidation(price)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+	token := r.Header["Authorization"]
+	status, message := service.PriceAddService(token[0], price)
+	if status {
+		_, err := validations.PriceValidation(price)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			w.WriteHeader(http.StatusCreated)
+			repositories.PriceAdd(price)
+		}
+		json.NewEncoder(w).Encode(message)
 	} else {
-		w.WriteHeader(http.StatusCreated)
-		repositories.PriceAdd(price)
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
 	}
-	json.NewEncoder(w).Encode(data)
+
 }
 
 func PriceDelete(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	key := vars["id"]
-	repositories.PriceDelete(key)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode("Deleted")
+	token := r.Header["Authorization"]
+	status, message := service.PriceDeleteService(token[0], repositories.PriceById(key))
+	if status {
+		w.WriteHeader(http.StatusOK)
+		repositories.PriceDelete(key)
+		json.NewEncoder(w).Encode(message)
+	} else {
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
+	}
 }
 
 func PriceUpdate(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	key := vars["id"]
 
 	var price models.Price
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusAccepted)
-
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &price)
 	price.Id, _ = strconv.Atoi(key)
 
-	repositories.PriceUpdate(price)
-	json.NewEncoder(w).Encode("Updated")
+	securityCode := repositories.PriceById(key).StationeryId
+	price.StationeryId = securityCode
+
+	token := r.Header["Authorization"]
+	status, message := service.PriceUpdateService(token[0], price)
+	if status {
+		w.WriteHeader(http.StatusOK)
+		repositories.PriceUpdate(price)
+		json.NewEncoder(w).Encode(message)
+	} else {
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
+	}
 }

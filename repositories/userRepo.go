@@ -39,3 +39,13 @@ func UpdateImage(url string, userId string) {
 	user.ImagePath = url
 	config.DB.Save(&user)
 }
+
+func UserByName(username string) (models.User, bool) {
+	var user models.User
+	config.DB.Find(&user, "username = ?", username)
+	if user.Username == "" {
+		return models.User{}, false
+	} else {
+		return user, true
+	}
+}

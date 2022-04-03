@@ -3,46 +3,81 @@ package handlers
 import (
 	"demir/models"
 	"demir/repositories"
+	"demir/service"
 	"demir/validations"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
 )
 
 func GetCommentByUserId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	key := vars["id"]
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(repositories.CommentByUserId(key))
+	id, _ := strconv.Atoi(key)
+	token := r.Header["Authorization"]
+	status, message := service.GetCommentByUserIdService(token[0], id)
+	if status {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(repositories.CommentByUserId(key))
+	} else {
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
+	}
 }
 
 func CommentByStationeryId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	vars := mux.Vars(r)
 	key := vars["id"]
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(repositories.CommentByStationeryId(key))
+
+	token := r.Header["Authorization"]
+	status, message := service.CommentByStationeryIdService(token[0])
+	if status {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(repositories.CommentByStationeryId(key))
+	} else {
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
+	}
 }
 
 func CommentAdd(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	var comment models.Comment
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &comment)
-	w.Header().Set("Content-Type", "application/json")
-	data, err := validations.CommentValidation(comment)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+
+	token := r.Header["Authorization"]
+	status, message := service.CommentAddService(token[0], comment)
+	if status {
+		_, err := validations.CommentValidation(comment)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		} else {
+			w.WriteHeader(http.StatusCreated)
+			comment.Date = time.Now()
+			repositories.CommentAdd(comment)
+		}
+		json.NewEncoder(w).Encode(message)
 	} else {
-		w.WriteHeader(http.StatusCreated)
-		comment.Date = time.Now()
-		repositories.CommentAdd(comment)
+		if message["message"] == "Yetksisiz kullanıcı." {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+		}
+		json.NewEncoder(w).Encode(message)
 	}
-	fmt.Println("SCORE : ", comment.Score)
-	//fmt.Println("HATA : ", err.Error())
-	json.NewEncoder(w).Encode(data)
 }

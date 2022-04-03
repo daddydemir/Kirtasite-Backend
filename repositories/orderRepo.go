@@ -20,3 +20,9 @@ func OrderByStationerId(stationeryId string) []models.Order {
 func OrderAdd(order models.Order) {
 	config.DB.Create(&order)
 }
+
+func OrderById(id string) models.Order {
+	var order models.Order
+	config.DB.Find(&order, "id = ?", id)
+	return order
+}

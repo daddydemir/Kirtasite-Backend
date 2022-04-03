@@ -18,3 +18,9 @@ func FileDelete(fileId string) {
 func FileAdd(file models.File) {
 	config.DB.Create(&file)
 }
+
+func FileById(id string) models.File {
+	var file models.File
+	config.DB.Find(&file, "id = ?", id)
+	return file
+}
