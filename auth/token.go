@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -13,7 +14,7 @@ func GenerateToken(username string) string {
 
 	claims["iat"] = time.Now().Unix()
 	claims["sub"] = username
-	claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 10).Unix()
 
 	tokenString, _ := token.SignedString([]byte("I-am-not-use-this-key"))
 
@@ -33,4 +34,13 @@ func IsValid(data string) (bool, map[string]string) {
 	} else {
 		return true, map[string]string{}
 	}
+}
+
+func TokenParser(data string) string {
+	claims := jwt.MapClaims{}
+	_, _ = jwt.ParseWithClaims(data, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("I-am-not-use-this-key"), nil
+	})
+	username := fmt.Sprintf("%v", claims["sub"])
+	return username
 }
