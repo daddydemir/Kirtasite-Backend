@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"demir/config"
-	"demir/models"
+	"github.com/daddydemir/kirtasiye-projesi/config"
+	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
 func FileByUserId(userId string) []models.File {

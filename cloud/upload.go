@@ -30,7 +30,7 @@ func UploadFile(myFile multipart.File, header *multipart.FileHeader) (string, st
 	if err != nil {
 		fmt.Println("Token hatası - ", err.Error())
 	}
-	_, err = io.Copy(tokenWriter, strings.NewReader("tokenData"))
+	_, err = io.Copy(tokenWriter, strings.NewReader("abc"))
 	if err != nil {
 		fmt.Println("Token kopyalama hatası - ", err.Error())
 	}

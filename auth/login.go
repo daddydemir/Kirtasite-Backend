@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"demir/repositories"
-	"demir/security"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/security"
 )
 
 func LoginToSystem(username string, password string) (map[string]string, bool) {

@@ -1,6 +1,6 @@
 package auth
 
-import "demir/repositories"
+import "github.com/daddydemir/kirtasiye-projesi/repositories"
 
 func CommentAuth(tokenString string, userId int) (bool, map[string]string) {
 	status, message := IsValid(tokenString)

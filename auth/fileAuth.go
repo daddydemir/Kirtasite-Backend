@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"demir/models"
-	"demir/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
 )
 
 func FileAuthUser(tokenString string, userId int) (bool, map[string]string) {

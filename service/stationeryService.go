@@ -1,9 +1,9 @@
 package service
 
 import (
-	"demir/auth"
-	"demir/models"
-	"demir/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/auth"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
 )
 
 func GetAllStationeryService(token string) (bool, map[string]string) {

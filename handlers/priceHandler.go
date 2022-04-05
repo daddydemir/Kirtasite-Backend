@@ -1,14 +1,15 @@
 package handlers
 
 import (
-	"demir/models"
-	"demir/repositories"
-	"demir/service"
-	"demir/validations"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/service"
+	"github.com/daddydemir/kirtasiye-projesi/validations"
 
 	"github.com/gorilla/mux"
 )

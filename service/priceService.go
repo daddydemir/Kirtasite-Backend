@@ -1,8 +1,8 @@
 package service
 
 import (
-	"demir/auth"
-	"demir/models"
+	"github.com/daddydemir/kirtasiye-projesi/auth"
+	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
 func GetAllPricesService(token string) (bool, map[string]string) {

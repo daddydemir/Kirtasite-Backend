@@ -1,11 +1,12 @@
 package handlers
 
 import (
-	"demir/auth"
-	"demir/models"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/daddydemir/kirtasiye-projesi/auth"
+	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {

@@ -10,7 +10,7 @@ import (
 )
 
 func UploadToCloudinary(file interface{}) (string, error) {
-	cld, _ := cloudinary.NewFromParams("cloud", "key", "secret")
+	cld, _ := cloudinary.NewFromParams("abc", "abc", "abc")
 	ctx := context.Background()
 
 	name := time.Now().Unix()

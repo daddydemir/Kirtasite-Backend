@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"demir/repositories"
 	"encoding/json"
 	"net/http"
+
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
 )
 
 func GetAllRoles(w http.ResponseWriter, r *http.Request) {

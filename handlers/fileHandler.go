@@ -1,18 +1,19 @@
 package handlers
 
 import (
-	"demir/auth"
-	"demir/cloud"
-	"demir/models"
-	"demir/repositories"
-	"demir/service"
-	"demir/validations"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/daddydemir/kirtasiye-projesi/auth"
+	"github.com/daddydemir/kirtasiye-projesi/cloud"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/service"
+	"github.com/daddydemir/kirtasiye-projesi/validations"
 
 	"github.com/gorilla/mux"
 )

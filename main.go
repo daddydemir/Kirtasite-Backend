@@ -1,11 +1,12 @@
 package main
 
 import (
-	"demir/config"
-	"demir/handlers"
-	"demir/migrations"
 	"fmt"
 	"net/http"
+
+	"github.com/daddydemir/kirtasiye-projesi/config"
+	"github.com/daddydemir/kirtasiye-projesi/handlers"
+	"github.com/daddydemir/kirtasiye-projesi/migrations"
 )
 
 func main() {

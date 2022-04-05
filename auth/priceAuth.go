@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"demir/models"
-	"demir/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
 )
 
 func PriceAuth(tokenString string, price models.Price) (bool, map[string]string) {

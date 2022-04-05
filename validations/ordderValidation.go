@@ -1,7 +1,7 @@
 package validations
 
 import (
-	"demir/models"
+	"github.com/daddydemir/kirtasiye-projesi/models"
 
 	"github.com/go-playground/validator/v10"
 )

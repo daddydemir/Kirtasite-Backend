@@ -15,4 +15,5 @@ go.work
 /Godeps/
 
 /migrations/
-
+/cloudinary/
+/test/

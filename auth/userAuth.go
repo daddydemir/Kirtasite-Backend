@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"demir/models"
-	"demir/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
 )
 
 func UserAuth(tokenString string, user models.User) (bool, map[string]string) {

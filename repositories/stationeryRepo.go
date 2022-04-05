@@ -1,9 +1,9 @@
 package repositories
 
 import (
-	"demir/config"
-	"demir/models"
-	"demir/security"
+	"github.com/daddydemir/kirtasiye-projesi/config"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/security"
 )
 
 func StationeryGetAll() []models.Stationery {
