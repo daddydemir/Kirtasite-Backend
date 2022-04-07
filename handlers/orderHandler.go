@@ -17,6 +17,8 @@ import (
 
 func OrderByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	id, _ := strconv.Atoi(key)
@@ -37,6 +39,8 @@ func OrderByUserId(w http.ResponseWriter, r *http.Request) {
 
 func OrderByIdForUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	order := repositories.OrderById(key)
@@ -57,6 +61,8 @@ func OrderByIdForUser(w http.ResponseWriter, r *http.Request) {
 
 func OrderByIdForStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	order := repositories.OrderById(key)
@@ -77,6 +83,8 @@ func OrderByIdForStationery(w http.ResponseWriter, r *http.Request) {
 
 func OrderByStationerId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	id, _ := strconv.Atoi(key)
@@ -97,6 +105,8 @@ func OrderByStationerId(w http.ResponseWriter, r *http.Request) {
 
 func OrderAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	var order models.Order
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &order)

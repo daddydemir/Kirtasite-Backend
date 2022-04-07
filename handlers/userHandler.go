@@ -17,6 +17,8 @@ import (
 
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	token := r.Header["Authorization"]
 	status, message := service.GetAllUserService(token[0])
 	if status {
@@ -31,6 +33,8 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 func GetUserById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	token := r.Header["Authorization"]
 	status, message := service.GetUserByIdService(token[0])
 	if status {
@@ -47,6 +51,8 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	var user models.User
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &user)
@@ -69,6 +75,8 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	user := repositories.GetUserById(key)
@@ -92,6 +100,8 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	var user models.User
@@ -117,6 +127,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 func UpdateImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]

@@ -17,6 +17,8 @@ import (
 
 func GetCommentByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	id, _ := strconv.Atoi(key)
@@ -37,6 +39,8 @@ func GetCommentByUserId(w http.ResponseWriter, r *http.Request) {
 
 func CommentByStationeryId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 
@@ -57,6 +61,8 @@ func CommentByStationeryId(w http.ResponseWriter, r *http.Request) {
 
 func CommentAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	var comment models.Comment
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &comment)

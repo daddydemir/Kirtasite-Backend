@@ -17,19 +17,17 @@ import (
 
 func GetAllStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	token := r.Header["Authorization"]
-	status, message := service.GetAllStationeryService(token[0])
-	if status {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(repositories.StationeryGetAll())
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(message)
-	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(repositories.StationeryGetAll())
 
 }
 func GetStationeryById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	token := r.Header["Authorization"]
 	status, message := service.GetStationeryByIdService(token[0])
 	if status {
@@ -45,6 +43,8 @@ func GetStationeryById(w http.ResponseWriter, r *http.Request) {
 }
 func UpdateStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	var stationery models.Stationery
@@ -68,6 +68,8 @@ func UpdateStationery(w http.ResponseWriter, r *http.Request) {
 
 func DeleteStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
@@ -87,6 +89,8 @@ func DeleteStationery(w http.ResponseWriter, r *http.Request) {
 
 func AddStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	var stationery models.Stationery
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &stationery)
@@ -113,6 +117,8 @@ func AddStationery(w http.ResponseWriter, r *http.Request) {
 
 func UpdateSImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]

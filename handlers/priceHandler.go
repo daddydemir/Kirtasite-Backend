@@ -16,6 +16,8 @@ import (
 
 func GetAllPrices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	token := r.Header["Authorization"]
 	status, message := service.GetAllPricesService(token[0])
 	if status {
@@ -33,6 +35,8 @@ func GetAllPrices(w http.ResponseWriter, r *http.Request) {
 
 func PriceById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
@@ -53,6 +57,8 @@ func PriceById(w http.ResponseWriter, r *http.Request) {
 
 func PriceAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	var price models.Price
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &price)
@@ -80,6 +86,8 @@ func PriceAdd(w http.ResponseWriter, r *http.Request) {
 
 func PriceDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
@@ -100,6 +108,8 @@ func PriceDelete(w http.ResponseWriter, r *http.Request) {
 
 func PriceUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 

@@ -20,6 +20,8 @@ import (
 
 func GetFileByUserId(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 	id, _ := strconv.Atoi(key)
@@ -36,6 +38,8 @@ func GetFileByUserId(w http.ResponseWriter, r *http.Request) {
 
 func FileById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
 
@@ -72,6 +76,8 @@ func FileById(w http.ResponseWriter, r *http.Request) {
 
 func FileAdd(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	file := models.File{}
 	file.Id, _ = strconv.Atoi(r.FormValue("id"))
 	file.UserId, _ = strconv.Atoi(r.FormValue("user_id"))
@@ -117,6 +123,8 @@ func FileDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	w.WriteHeader(http.StatusOK)
 	//repositories.FileDelete(key)
 	json.NewEncoder(w).Encode(map[string]string{"message": key + " deleted."})
