@@ -27,6 +27,9 @@ Bu proje;
 5. DeleteUser
     - Method : DELETE
     - `/api/users/{id}`
+6. UpdateImage
+    - Method : PUT
+    - `/api/users/{id}`
 
 ### Request Body
 
@@ -54,10 +57,13 @@ Bu proje;
     - `/api/stationery`
 4. UpdateStationery
     - Method : PUT
-    - `/api/stationery`
+    - `/api/stationery/{id}`
 5. DeleteStationery
     - Method : DELETE
     - `/api/stationery/{id}`
+6. UpdateStationery
+    - Method : PUT
+    - ``/api/stationery/{id}`
 
 ### Request Body
 
@@ -69,7 +75,7 @@ Bu proje;
     "image_path":"",
     "mail":"",
     "tel_no":"",
-    "address":"",
+    "address_id":0,
     "score":0
 }
 ```
@@ -100,6 +106,9 @@ Bu proje;
 3. FileAdd
     - Method : POST
     - `/api/files`
+4. FileById
+    - Method : GET
+    - `/api/file/{id}`
 
 ### Request Body
 
@@ -188,4 +197,58 @@ Bu proje;
 }
 ```
 
+**ADDRESS**
+
+1. GetAddressById
+    - Method : GET
+    - `/api/locate/{id}`
+2. GetAddressByCity
+    - Method : GET
+    - `/api/city/{id}`
+3. GetAddressByDistrict
+    - Method : POST
+    - `/api/district/{id}`
+
+### Request Body 
+
+``` json
+{
+    "id":0,
+    "city_id":0,
+    "district_id":0,
+    "name":"",
+    "cordinate_x":"",
+    "cordinate_y":""
+}
+```
+
+**CITY**
+1. GetCityById
+    - Method : GET
+    - `/api/cities/{id}`
+
+### Request Body
+``` json
+{
+    "id":0,
+    "name":""
+}
+```
+
+**DISTRICT**
+1. GetDistrictById
+    - Method : GET
+    - `/api/districts/{id}`
+2. GetDistrictByCity
+    - Method : GET
+    - `/api/district-city/{id}`
+
+### Response Body
+```json
+{
+    "id":0,
+    "city_id":0,
+    "name":""
+}
+```
 > NOT: Request Body POST ve PUT metodunda kullanılacak
