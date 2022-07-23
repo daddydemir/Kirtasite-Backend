@@ -18,19 +18,20 @@ func GetAllPrices(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	token := r.Header["Authorization"]
-	status, message := service.GetAllPricesService(token[0])
-	if status {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(repositories.GetAllPrices())
-	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-		json.NewEncoder(w).Encode(message)
-	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(repositories.GetAllPrices())
+
+}
+
+func PriceByStationeryId(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	vars := mux.Vars(r)
+	key := vars["id"]
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(repositories.PriceByStationeryId(key))
 }
 
 func PriceById(w http.ResponseWriter, r *http.Request) {
@@ -39,19 +40,9 @@ func PriceById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
-	token := r.Header["Authorization"]
-	status, message := service.PriceByIdService(token[0])
-	if status {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(repositories.PriceById(key))
-	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-		json.NewEncoder(w).Encode(message)
-	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(repositories.PriceById(key))
 
 }
 

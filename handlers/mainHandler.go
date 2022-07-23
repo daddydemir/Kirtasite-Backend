@@ -1,8 +1,14 @@
 package handlers
 
-import "github.com/gorilla/mux"
+import (
+	"net/http"
 
-func MainRouting() *mux.Router {
+	"github.com/gorilla/mux"
+	"github.com/rs/cors"
+)
+
+func MainRouting() http.Handler {
+
 	r := mux.NewRouter().StrictSlash(true)
 	// users
 	r.HandleFunc("/api/users", GetAllUsers).Methods("GET")
@@ -35,6 +41,7 @@ func MainRouting() *mux.Router {
 	// prices
 	r.HandleFunc("/api/prices/", GetAllPrices).Methods("GET")
 	r.HandleFunc("/api/prices/{id}", PriceById).Methods("GET")
+	r.HandleFunc("/api/prices/stationery/{id}", PriceByStationeryId).Methods("GET")
 	r.HandleFunc("/api/prices/{id}", PriceDelete).Methods("DELETE")
 	r.HandleFunc("/api/prices/", PriceAdd).Methods("POST")
 	r.HandleFunc("/api/prices/{id}", PriceUpdate).Methods("PUT")
@@ -51,5 +58,19 @@ func MainRouting() *mux.Router {
 	r.HandleFunc("/api/comments/stationery/{id}", CommentByStationeryId).Methods("GET")
 	r.HandleFunc("/api/comments/", CommentAdd).Methods("POST")
 
-	return r
+	// address
+	r.HandleFunc("/api/locate/{id}", GetAddressById).Methods("GET")
+	r.HandleFunc("/api/city/{id}", GetAddressByCity).Methods("GET")
+	r.HandleFunc("/api/district/{id}", GetAddressByDistrict).Methods("GET")
+
+	// city
+	r.HandleFunc("/api/cities/{id}", GetCityById).Methods("GET")
+
+	// district
+
+	r.HandleFunc("/api/districts/{id}", GetDistrictById).Methods("GET")
+	r.HandleFunc("/api/district-city/{id}", GetDistrictByCity).Methods("GET")
+
+	handler := cors.AllowAll().Handler(r)
+	return handler
 }

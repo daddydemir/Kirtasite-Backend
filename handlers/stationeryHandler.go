@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -16,19 +17,29 @@ import (
 )
 
 func GetAllStationery(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	fmt.Println("REQUEST : ", r)
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	w.Header().Set("Content-Type", "application/json")
 
+	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	fmt.Println("KIRTASIYELER LISTELENDI")
+	token := r.Header["Authorization"]
+	fmt.Println("TOKEN : ", token)
+	fmt.Println("HEADER : ", r.Header)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(repositories.StationeryGetAll())
 
 }
 func GetStationeryById(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("REQUEST : ", r)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+
 	token := r.Header["Authorization"]
+	fmt.Println("YARRAK ", token)
 	status, message := service.GetStationeryByIdService(token[0])
 	if status {
 		vars := mux.Vars(r)

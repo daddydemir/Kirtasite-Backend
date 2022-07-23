@@ -44,19 +44,9 @@ func CommentByStationeryId(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 
-	token := r.Header["Authorization"]
-	status, message := service.CommentByStationeryIdService(token[0])
-	if status {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(repositories.CommentByStationeryId(key))
-	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-		json.NewEncoder(w).Encode(message)
-	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(repositories.CommentByStationeryId(key))
+
 }
 
 func CommentAdd(w http.ResponseWriter, r *http.Request) {
