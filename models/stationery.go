@@ -8,6 +8,6 @@ type Stationery struct {
 	ImagePath   string  `json:"image_path" validate:"required,url"`
 	Mail        string  `json:"mail" validate:"required,email"`
 	TelNo       string  `json:"tel_no" validate:"required,len=9"`
-	Address     string  `json:"address" validate:"required"`
+	AddressId   string  `json:"address_id" validate:"required"`
 	Score       float32 `json:"score" validate:"required,gt=0,lt=11"`
 }
