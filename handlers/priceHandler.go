@@ -54,27 +54,31 @@ func PriceAdd(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &price)
 	token := r.Header["Authorization"]
-	status, message := service.PriceAddService(token[0], price)
-	if status {
-		_, err := validations.PriceValidation(price)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-		} else {
-			w.WriteHeader(http.StatusCreated)
-			repositories.PriceAdd(price)
-		}
-		json.NewEncoder(w).Encode(message)
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
+		status, message := service.PriceAddService(token[0], price)
+		if status {
+			_, err := validations.PriceValidation(price)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+			} else {
+				w.WriteHeader(http.StatusCreated)
+				repositories.PriceAdd(price)
+			}
+			json.NewEncoder(w).Encode(message)
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			if message["message"] == "Yetksisiz kullanıcı." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
 		}
-		json.NewEncoder(w).Encode(message)
 	}
-
 }
 
+// !TODO[ Bu endpoint niye var ]
 func PriceDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -82,6 +86,7 @@ func PriceDelete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
+
 	status, message := service.PriceDeleteService(token[0], repositories.PriceById(key))
 	if status {
 		w.WriteHeader(http.StatusOK)
@@ -113,17 +118,21 @@ func PriceUpdate(w http.ResponseWriter, r *http.Request) {
 	price.StationeryId = securityCode
 
 	token := r.Header["Authorization"]
-	status, message := service.PriceUpdateService(token[0], price)
-	if status {
-		w.WriteHeader(http.StatusOK)
-		repositories.PriceUpdate(price)
-		json.NewEncoder(w).Encode(message)
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
+		status, message := service.PriceUpdateService(token[0], price)
+		if status {
+			w.WriteHeader(http.StatusOK)
+			repositories.PriceUpdate(price)
+			json.NewEncoder(w).Encode(message)
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			if message["message"] == "Yetksisiz kullanıcı." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
 		}
-		json.NewEncoder(w).Encode(message)
 	}
 }

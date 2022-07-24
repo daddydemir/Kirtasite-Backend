@@ -23,33 +23,19 @@ func GetAllStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	fmt.Println("KIRTASIYELER LISTELENDI")
-	token := r.Header["Authorization"]
-	fmt.Println("TOKEN : ", token)
-	fmt.Println("HEADER : ", r.Header)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(repositories.StationeryGetAll())
 
 }
 func GetStationeryById(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("REQUEST : ", r)
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-
-	token := r.Header["Authorization"]
-	fmt.Println("YARRAK ", token)
-	status, message := service.GetStationeryByIdService(token[0])
-	if status {
-		vars := mux.Vars(r)
-		key := vars["id"]
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(repositories.StationeryGetById(key))
-	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(message)
-	}
+	vars := mux.Vars(r)
+	key := vars["id"]
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(repositories.StationeryGetById(key))
 
 }
 func UpdateStationery(w http.ResponseWriter, r *http.Request) {
@@ -63,17 +49,21 @@ func UpdateStationery(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &stationery)
 	stationery.Id, _ = strconv.Atoi(key)
 	token := r.Header["Authorization"]
-	status, message := service.UpdateStationeryService(token[0], stationery)
-	if status {
-		repositories.StationeryUpdate(stationery)
-		json.NewEncoder(w).Encode(message)
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
+		status, message := service.UpdateStationeryService(token[0], stationery)
+		if status {
+			repositories.StationeryUpdate(stationery)
+			json.NewEncoder(w).Encode(message)
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			if message["message"] == "Yetksisiz kullanıcı." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
 		}
-		json.NewEncoder(w).Encode(message)
 	}
 }
 
@@ -84,17 +74,21 @@ func DeleteStationery(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
-	status, message := service.DeleteStationeryService(token[0], repositories.StationeryGetById(key))
-	if status {
-		w.WriteHeader(http.StatusNoContent)
-		repositories.StationeryDelete(key)
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
+		status, message := service.DeleteStationeryService(token[0], repositories.StationeryGetById(key))
+		if status {
+			w.WriteHeader(http.StatusNoContent)
+			repositories.StationeryDelete(key)
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			if message["message"] == "Yetksisiz kullanıcı." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
 		}
-		json.NewEncoder(w).Encode(message)
 	}
 }
 
@@ -133,29 +127,32 @@ func UpdateSImage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
-	status, message := service.UpdateSImageService(token[0], repositories.StationeryGetById(key))
-	if status {
-		file, _, err := r.FormFile("file")
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
-		}
-		url, err := cloudinary.UploadToCloudinary(file)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
-		}
-		repositories.UpdateSImage(url, key)
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]string{"message": "Başarıyla güncellendi."})
-
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-		json.NewEncoder(w).Encode(message)
-	}
+		status, message := service.UpdateSImageService(token[0], repositories.StationeryGetById(key))
+		if status {
+			file, _, err := r.FormFile("file")
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+			}
+			url, err := cloudinary.UploadToCloudinary(file)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+			}
+			repositories.UpdateSImage(url, key)
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(map[string]string{"message": "Başarıyla güncellendi."})
 
+		} else {
+			if message["message"] == "Yetksisiz kullanıcı." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
+		}
+	}
 }

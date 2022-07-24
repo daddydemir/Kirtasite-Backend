@@ -20,15 +20,21 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	token := r.Header["Authorization"]
-	status, message := service.GetAllUserService(token[0])
-	if status {
-		w.WriteHeader(http.StatusOK)
-		users := repositories.UserGetAll()
-		json.NewEncoder(w).Encode(users)
+	if token == nil {
+		// pass
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(message)
+		status, message := service.GetAllUserService(token[0])
+		if status {
+			w.WriteHeader(http.StatusOK)
+			users := repositories.UserGetAll()
+			json.NewEncoder(w).Encode(users)
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(message)
+		}
 	}
+
 }
 
 func GetUserById(w http.ResponseWriter, r *http.Request) {
@@ -36,17 +42,20 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	token := r.Header["Authorization"]
-	status, message := service.GetUserByIdService(token[0])
-	if status {
-		vars := mux.Vars(r)
-		key := vars["id"]
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(repositories.GetUserById(key))
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(message)
+		status, message := service.GetUserByIdService(token[0])
+		if status {
+			vars := mux.Vars(r)
+			key := vars["id"]
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(repositories.GetUserById(key))
+		} else {
+			w.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(w).Encode(message)
+		}
 	}
-
 }
 
 func AddUser(w http.ResponseWriter, r *http.Request) {
@@ -64,6 +73,7 @@ func AddUser(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			w.WriteHeader(http.StatusCreated)
+			user.RoleId = 1
 			repositories.AddUser(user)
 		}
 		json.NewEncoder(w).Encode(data)
@@ -82,18 +92,22 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	user := repositories.GetUserById(key)
 
 	token := r.Header["Authorization"]
-	status, message := service.DeleteUserService(token[0], user)
-	if status {
-		repositories.DeleteUser(user)
-		w.WriteHeader(http.StatusNoContent)
-		json.NewEncoder(w).Encode(message)
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Sadece kendiniz üzerinde işlem yapabilirsiniz." {
-			w.WriteHeader(http.StatusForbidden)
+		status, message := service.DeleteUserService(token[0], user)
+		if status {
+			repositories.DeleteUser(user)
+			w.WriteHeader(http.StatusNoContent)
+			json.NewEncoder(w).Encode(message)
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			if message["message"] == "Sadece kendiniz üzerinde işlem yapabilirsiniz." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
 		}
-		json.NewEncoder(w).Encode(message)
 	}
 
 }
@@ -109,20 +123,24 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(reqBody, &user)
 	user.Id, _ = strconv.Atoi(key)
 	token := r.Header["Authorization"]
-	status, message := service.UpdateUserService(token[0], user)
-	if status {
-		w.WriteHeader(http.StatusOK)
-		repositories.UpdateUser(user)
-		json.NewEncoder(w).Encode(message)
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Sadece kendi bilgilerinizi güncelleyebilirsiniz." {
-			w.WriteHeader(http.StatusForbidden)
+		status, message := service.UpdateUserService(token[0], user)
+		if status {
+			w.WriteHeader(http.StatusOK)
+			repositories.UpdateUser(user)
+			json.NewEncoder(w).Encode(message)
 		} else {
-			w.WriteHeader(http.StatusUnauthorized)
+			if message["message"] == "Sadece kendi bilgilerinizi güncelleyebilirsiniz." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
 		}
-		json.NewEncoder(w).Encode(message)
-	}
 
+	}
 }
 
 func UpdateImage(w http.ResponseWriter, r *http.Request) {
@@ -132,30 +150,33 @@ func UpdateImage(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	key := vars["id"]
 	token := r.Header["Authorization"]
-	status, message := service.UpdateImageService(token[0], repositories.GetUserById(key))
-	if status {
-		file, _, err := r.FormFile("file")
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
-		}
-		url, err := cloudinary.UploadToCloudinary(file)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
-		} else {
-			repositories.UpdateImage(url, key)
-			w.WriteHeader(http.StatusAccepted)
-			json.NewEncoder(w).Encode(map[string]string{"message": "Başarıyla güncellendi"})
-		}
-
+	if token == nil {
+		json.NewEncoder(w).Encode(NotLoginMessage())
 	} else {
-		if message["message"] == "Sadece kendi profil resminizi güncelleyebilirsiniz.." {
-			w.WriteHeader(http.StatusForbidden)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-		json.NewEncoder(w).Encode(message)
-	}
+		status, message := service.UpdateImageService(token[0], repositories.GetUserById(key))
+		if status {
+			file, _, err := r.FormFile("file")
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+			}
+			url, err := cloudinary.UploadToCloudinary(file)
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				json.NewEncoder(w).Encode(map[string]string{"message": err.Error()})
+			} else {
+				repositories.UpdateImage(url, key)
+				w.WriteHeader(http.StatusAccepted)
+				json.NewEncoder(w).Encode(map[string]string{"message": "Başarıyla güncellendi"})
+			}
 
+		} else {
+			if message["message"] == "Sadece kendi profil resminizi güncelleyebilirsiniz.." {
+				w.WriteHeader(http.StatusForbidden)
+			} else {
+				w.WriteHeader(http.StatusUnauthorized)
+			}
+			json.NewEncoder(w).Encode(message)
+		}
+	}
 }
