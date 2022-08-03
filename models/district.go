@@ -1,6 +1,7 @@
 package models
 
 type District struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
+	Id     int
+	Name   string
+	CityId int
 }
