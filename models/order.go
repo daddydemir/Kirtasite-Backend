@@ -3,12 +3,12 @@ package models
 import "time"
 
 type Order struct {
-	Id           int
-	FileId       int
-	CustomerId   int
-	StationeryId int
-	StatusId     int
-	TotalPrice   float32
-	CreatedDate  time.Time
-	DeliveryDate time.Time
+	Id           int       `json:"id"`
+	FileId       int       `json:"file_id"`
+	CustomerId   int       `json:"customer_id"`
+	StationeryId int       `json:"stationery_id"`
+	StatusId     int       `json:"status_id"`
+	TotalPrice   float32   `json:"total_price"`
+	CreatedDate  time.Time `json:"created_date"`
+	DeliveryDate time.Time `json:"delivery_date"`
 }

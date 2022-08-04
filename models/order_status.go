@@ -1,6 +1,6 @@
 package models
 
 type Order_Status struct {
-	Id      int
-	Content string
+	Id      int    `json:"id"`
+	Content string `json:"content"`
 }
