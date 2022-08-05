@@ -5,24 +5,26 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
-func OrderByUserId(userId string) []models.Order {
-	var orders []models.Order
-	config.DB.Find(&orders, "user_id = ?", userId)
-	return orders
+func GetOrderByCustomerId(userId string) (interface{}, bool) {
+	var orders []models.Orders
+	result := config.DB.Find(&orders, "customer_id = ?", userId)
+	return returnModel(result.Error, orders)
 }
-
-func OrderByStationerId(stationeryId string) []models.Order {
-	var orders []models.Order
-	config.DB.Find(&orders, "stationery_id = ?", stationeryId)
-	return orders
+func GetOrderByStationeryId(stationeryId string) (interface{}, bool) {
+	var orders []models.Orders
+	result := config.DB.Find(&orders, "stationery_id = ?", stationeryId)
+	return returnModel(result.Error, orders)
 }
-
-func OrderAdd(order models.Order) {
-	config.DB.Create(&order)
+func AddOrder(order models.Order) (interface{}, bool) {
+	result := config.DB.Create(&order)
+	return returnModel(result.Error, order)
 }
-
-func OrderById(id string) models.Order {
-	var order models.Order
-	config.DB.Find(&order, "id = ?", id)
-	return order
+func GetOrderById(id string) (interface{}, bool) {
+	var order models.Orders
+	result := config.DB.Find(&order, "id = ?", id)
+	return returnModel(result.Error, order)
+}
+func UpdateOrder(order models.Order) (interface{}, bool) {
+	result := config.DB.Save(&order)
+	return returnModel(result.Error, order)
 }

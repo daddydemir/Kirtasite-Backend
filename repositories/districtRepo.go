@@ -5,14 +5,14 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
-func GetDistrictById(id string) models.District {
+func GetDistrictById(id string) (interface{}, bool) {
 	var district models.District
-	config.DB.Find(&district, "id = ?", id)
-	return district
+	result := config.DB.Find(&district, "id = ?", id)
+	return returnModel(result.Error, district)
 }
 
-func GetDistrictByCity(id string) []models.District {
+func GetDistrictByCityId(id string) (interface{}, bool) {
 	var district []models.District
-	config.DB.Find(&district, "city_id = ?", id)
-	return district
+	result := config.DB.Find(&district, "city_id = ?", id)
+	return returnModel(result.Error, district)
 }

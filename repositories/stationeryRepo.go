@@ -6,44 +6,46 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/security"
 )
 
-func StationeryGetAll() []models.Stationery {
-	var stationery []models.Stationery
-	config.DB.Find(&stationery)
-	return stationery
+func GetStationeryByUserId(stationeryId string) (interface{}, bool) {
+	var stationery models.Stationeries
+	result := config.DB.Find(&stationery, "user_id = ?", stationeryId)
+	return returnModel(result.Error, stationery)
 }
-
-func StationeryGetById(stationeryId string) models.Stationery {
-	var stationery models.Stationery
-	config.DB.Find(&stationery, "id = ?", stationeryId)
-	return stationery
+func GetStationeryByName(companyName string) (interface{}, bool) {
+	var stationery models.Stationeries
+	result := config.DB.Find(&stationery, "company_name = ?", companyName)
+	return returnModel(result.Error, stationery)
 }
-
-func StationeryAdd(stationery models.Stationery) {
-	stationery.Password = security.HashPassword(stationery.Password)
-	config.DB.Create(&stationery)
-}
-
-func StationeryUpdate(stationery models.Stationery) {
-	config.DB.Save(&stationery)
-}
-
-func StationeryDelete(stationeryId string) {
-	config.DB.Delete(models.Stationery{}, "id = ?", stationeryId)
-}
-
-func UpdateSImage(url string, stationeryId string) {
-	var stationery models.Stationery = StationeryGetById(stationeryId)
-	stationery.ImagePath = url
-	config.DB.Save(&stationery)
-}
-
-func StationeryByName(companyName string) (models.Stationery, bool) {
-	var stationery models.Stationery
-	config.DB.Find(&stationery, "company_name = ?", companyName)
-	if stationery.CompanyName == "" {
-		return models.Stationery{}, false
+func AddStationery(stationery models.Stationeries) (interface{}, bool) {
+	_, status := GetStationeryByName(stationery.CompanyName)
+	if status {
+		return "Bu isimde Kayıtlı bir kırtasiye zaten var.", false
 	} else {
-		return stationery, true
+		stationery.UserData.Password = security.HashPassword(stationery.UserData.Password)
+		result := config.DB.Create(&stationery)
+		return returnModel(result.Error, stationery)
 	}
 
+}
+func DeleteStationery(stationeryId string) (interface{}, bool) {
+	result := config.DB.Delete(models.Stationery{}, "id = ?", stationeryId)
+	return returnModel(result.Error, "")
+}
+func UpdateStationery(stationery models.Stationeries) (interface{}, bool) {
+	// TODO parola sıfırlama isteğini kontrol et
+	result := config.DB.Save(&stationery)
+	return returnModel(result.Error, stationery)
+}
+func AllStationery() (interface{}, bool) {
+	var stationery []models.Stationeries
+	result := config.DB.Find(&stationery)
+	return returnModel(result.Error, stationery)
+}
+func UpdateStationeryImage(url string, stationeryId string) (interface{}, bool) {
+	response, _ := GetStationeryByUserId(stationeryId)
+	var stationery models.Stationeries
+	stationery = response.(models.Stationeries)
+	stationery.UserData.ImagePath = url
+	result := config.DB.Save(&stationery)
+	return returnModel(result.Error, stationery)
 }

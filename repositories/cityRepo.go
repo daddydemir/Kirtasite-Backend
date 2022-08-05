@@ -5,8 +5,8 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
-func GetCityById(id string) models.City {
+func GetCityById(id string) (interface{}, bool) {
 	var city models.City
-	config.DB.Find(&city, "id = ?", id)
-	return city
+	result := config.DB.Find(&city, "id = ?", id)
+	return returnModel(result.Error, city)
 }

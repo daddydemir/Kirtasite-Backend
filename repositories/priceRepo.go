@@ -5,31 +5,30 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
-func GetAllPrices() []models.Price {
+func AllPrices() (interface{}, bool) {
 	var prices []models.Price
-	config.DB.Find(&prices)
-	return prices
+	result := config.DB.Find(&prices)
+	return returnModel(result.Error, prices)
 }
-
-func PriceById(priceId string) models.Price {
+func GetPriceById(priceId string) (interface{}, bool) {
 	var price models.Price
-	config.DB.Find(&price, "id = ?", priceId)
-	return price
+	result := config.DB.Find(&price, "id = ?", priceId)
+	return returnModel(result.Error, price)
 }
-
-func PriceByStationeryId(stationeryId string) []models.Price {
+func GetPriceByStationeryId(stationeryId string) (interface{}, bool) {
 	var prices []models.Price
-	config.DB.Find(&prices, "stationery_id = ?", stationeryId)
-	return prices
+	result := config.DB.Find(&prices, "stationery_id = ?", stationeryId)
+	return returnModel(result.Error, prices)
 }
-
-func PriceAdd(price models.Price) {
-	config.DB.Create(&price)
+func AddPrice(price models.Price) (interface{}, bool) {
+	result := config.DB.Create(&price)
+	return returnModel(result.Error, "")
 }
-
-func PriceDelete(priceId string) {
-	config.DB.Delete(models.Price{}, "id = ?", priceId)
+func DeletePrice(priceId string) (interface{}, bool) {
+	result := config.DB.Delete(models.Price{}, "id = ?", priceId)
+	return returnModel(result.Error, "")
 }
-func PriceUpdate(price models.Price) {
-	config.DB.Save(&price)
+func UpdatePrice(price models.Price) (interface{}, bool) {
+	result := config.DB.Save(&price)
+	return returnModel(result.Error, price)
 }

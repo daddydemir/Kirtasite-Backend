@@ -5,9 +5,8 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
-func RoleGetAll() []models.Role {
-
+func AllRoles() (interface{}, bool) {
 	var roles []models.Role
-	config.DB.Find(&roles)
-	return roles
+	result := config.DB.Find(&roles)
+	return returnModel(result.Error, roles)
 }

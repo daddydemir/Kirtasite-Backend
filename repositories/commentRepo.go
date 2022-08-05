@@ -5,18 +5,17 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 )
 
-func CommentByUserId(userId string) []models.Comment {
-	var comments []models.Comment
-	config.DB.Find(&comments, "user_id = ?", userId)
-	return comments
+func GetCommentByCustomerId(userId string) (interface{}, bool) {
+	var comments []models.Comments
+	result := config.DB.Find(&comments, "customer_id = ?", userId)
+	return returnModel(result.Error, comments)
 }
-
-func CommentByStationeryId(stationeryId string) []models.Comment {
-	var comments []models.Comment
-	config.DB.Find(&comments, "stationery_id = ?", stationeryId)
-	return comments
+func GetCommentByStationeryId(stationeryId string) (interface{}, bool) {
+	var comments []models.Comments
+	result := config.DB.Find(&comments, "stationery_id = ?", stationeryId)
+	return returnModel(result.Error, comments)
 }
-
-func CommentAdd(comment models.Comment) {
-	config.DB.Create(&comment)
+func AddComment(comment models.Comment) (interface{}, bool) {
+	result := config.DB.Create(&comment)
+	return returnModel(result.Error, comment)
 }
