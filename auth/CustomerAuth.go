@@ -6,12 +6,12 @@ import (
 	"github.com/daddydemir/kirtasiye-projesi/service"
 )
 
-func StationeryAuth(tokenString string, stationery models.Stationery) (bool, map[string]interface{}) {
-	tokenStationery, status := repositories.GetStationeryByName(TokenParser(tokenString))
-	var tempStationery models.Stationery
-	tempStationery = tokenStationery.(models.Stationery)
+func UserAuth(tokenString string, user models.Users) (bool, map[string]interface{}) {
+	tokenUser, status := repositories.GetCustomerByUserName(TokenParser(tokenString))
+	var tempUser models.Users
+	tempUser = tokenUser.(models.Users)
 	if status {
-		if tempStationery.UserId == stationery.UserId {
+		if tempUser.Id == user.Id {
 			return true, service.OkMessage()
 		} else {
 			return false, service.YetkisiOlmayanMessage()

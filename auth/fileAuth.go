@@ -3,30 +3,35 @@ package auth
 import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/service"
 )
 
-func FileAuthUser(tokenString string, userId int) (bool, map[string]string) {
-	tokenUser, status := repositories.UserByName(TokenParser(tokenString))
+func FileAuthUser(tokenString string, userId int) (bool, map[string]interface{}) {
+	tokenUser, status := repositories.GetCustomerByUserName(TokenParser(tokenString))
+	var customer models.Customer
+	customer = tokenUser.(models.Customer)
 	if status {
-		if tokenUser.Id == userId {
-			return true, map[string]string{"message": "Kullanıcı gereken yetkilere sahip."}
+		if customer.UserId == userId {
+			return true, service.OkMessage()
 		} else {
-			return false, map[string]string{"message": "Yetkisiz kullanıcı."}
+			return false, service.YetkisiOlmayanMessage()
 		}
 	} else {
-		return false, map[string]string{"message": "Yetkisiz kullanıcı."}
+		return false, service.YetkisiOlmayanMessage()
 	}
 }
 
-func FileAuthDelete(tokenString string, file models.File) (bool, map[string]string) {
-	tokenUser, status := repositories.UserByName(TokenParser(tokenString))
+func FileAuthDelete(tokenString string, file models.File) (bool, map[string]interface{}) {
+	tokenUser, status := repositories.GetCustomerByUserName(TokenParser(tokenString))
+	var customer models.Customer
+	customer = tokenUser.(models.Customer)
 	if status {
-		if tokenUser.Id == file.UserId {
-			return true, map[string]string{"message": "Kullanıcı gereken yetkilere sahip."}
+		if customer.UserId == file.UserId {
+			return true, service.OkMessage()
 		} else {
-			return false, map[string]string{"message": "Yetkisiz kullanıcı."}
+			return false, service.YetkisiOlmayanMessage()
 		}
 	} else {
-		return false, map[string]string{"message": "Yetksisiz kullanıcı."}
+		return false, service.YetkisiOlmayanMessage()
 	}
 }

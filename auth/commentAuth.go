@@ -1,19 +1,25 @@
 package auth
 
-import "github.com/daddydemir/kirtasiye-projesi/repositories"
+import (
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/service"
+)
 
-func CommentAuth(tokenString string, userId int) (bool, map[string]string) {
+func CommentAuth(tokenString string, userId int) (bool, map[string]interface{}) {
 	status, message := IsValid(tokenString)
 	if status {
-		tokenUser, state := repositories.UserByName(TokenParser(tokenString))
+		tokenUser, state := repositories.GetCustomerByUserId(TokenParser(tokenString))
+		var customer models.Customer
+		customer = tokenUser.(models.Customer)
 		if state {
-			if tokenUser.Id == userId {
-				return true, map[string]string{}
+			if customer.UserId == userId {
+				return true, service.OkMessage()
 			} else {
-				return false, map[string]string{"message": "Yetksisiz kullanıcı."}
+				return false, service.YetkisiOlmayanMessage()
 			}
 		} else {
-			return false, map[string]string{"message": "Yetksisiz kullanıcı."}
+			return false, service.YetkisiOlmayanMessage()
 		}
 	} else {
 		return false, message

@@ -3,17 +3,20 @@ package auth
 import (
 	"github.com/daddydemir/kirtasiye-projesi/models"
 	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"github.com/daddydemir/kirtasiye-projesi/service"
 )
 
-func PriceAuth(tokenString string, price models.Price) (bool, map[string]string) {
-	tokenStationery, status := repositories.StationeryByName(TokenParser(tokenString))
+func PriceAuth(tokenString string, price models.Price) (bool, map[string]interface{}) {
+	tokenStationery, status := repositories.GetStationeryByName(TokenParser(tokenString))
+	var tempStationery models.Stationery
+	tempStationery = tokenStationery.(models.Stationery)
 	if status {
-		if price.StationeryId == tokenStationery.Id {
-			return true, map[string]string{"message": "Kullanıcı gereken yetkilere sahip."}
+		if price.StationeryId == tempStationery.UserId {
+			return true, service.OkMessage()
 		} else {
-			return false, map[string]string{"message": "Yetkisiz kullanıcı."}
+			return false, service.YetkisiOlmayanMessage()
 		}
 	} else {
-		return false, map[string]string{"message": "Yetkisiz kullanıcı."}
+		return false, service.YetkisiOlmayanMessage()
 	}
 }

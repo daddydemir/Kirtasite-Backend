@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"github.com/daddydemir/kirtasiye-projesi/service"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -21,18 +22,18 @@ func GenerateToken(username string) string {
 	return tokenString
 }
 
-func IsValid(data string) (bool, map[string]string) {
+func IsValid(data string) (bool, map[string]interface{}) {
 	tkn, err := jwt.Parse(data, func(token *jwt.Token) (interface{}, error) {
 		return []byte("I-am-not-use-this-key"), nil
 	})
 	if err != nil {
-		return false, map[string]string{"message": "Token geçersiz"}
+		return false, service.WrongTokenMessage()
 	}
 
 	if !tkn.Valid {
-		return false, map[string]string{"message": "Token'ın süresi dolmuş."}
+		return false, service.UnauthorizedMessage()
 	} else {
-		return true, map[string]string{}
+		return true, nil
 	}
 }
 
