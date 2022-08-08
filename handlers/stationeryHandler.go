@@ -2,31 +2,30 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
+	"github.com/daddydemir/kirtasiye-projesi/models"
+	"github.com/daddydemir/kirtasiye-projesi/service"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-
-	"github.com/daddydemir/kirtasiye-projesi/cloudinary"
-	"github.com/daddydemir/kirtasiye-projesi/models"
-	"github.com/daddydemir/kirtasiye-projesi/repositories"
-	"github.com/daddydemir/kirtasiye-projesi/service"
-	"github.com/daddydemir/kirtasiye-projesi/validations"
-
-	"github.com/gorilla/mux"
 )
 
 func GetAllStationery(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("REQUEST : ", r)
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(repositories.StationeryGetAll())
+
+	status, message := service.GetAllStationeryService("")
+	if status {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		w.WriteHeader(http.StatusFound)
+	}
+	json.NewEncoder(w).Encode(message)
 
 }
+
 func GetStationeryById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -34,11 +33,17 @@ func GetStationeryById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	vars := mux.Vars(r)
 	key := vars["id"]
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(repositories.StationeryGetById(key))
+	status, message := service.GetStationeryByIdService(key)
+	if status {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+	json.NewEncoder(w).Encode(message)
 
 }
-func UpdateStationery(w http.ResponseWriter, r *http.Request) {
+
+/*func UpdateStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -65,9 +70,9 @@ func UpdateStationery(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(message)
 		}
 	}
-}
+}*/
 
-func DeleteStationery(w http.ResponseWriter, r *http.Request) {
+/*func DeleteStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -90,36 +95,29 @@ func DeleteStationery(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(message)
 		}
 	}
-}
+}*/
 
 func AddStationery(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	var stationery models.Stationery
+
+	var stationery models.Stationeries
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.Unmarshal(reqBody, &stationery)
-	stationery.ImagePath = "https://res.cloudinary.com/dpdlwo6vi/image/upload/v1647981518/1647981517.png"
+	stationery.UserData.ImagePath = "https://res.cloudinary.com/dpdlwo6vi/image/upload/v1647981518/1647981517.png"
 	status, message := service.AddStationeryService(stationery)
+
 	if status {
-		data, err := validations.StationeryValidation(stationery)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-		} else {
-			w.WriteHeader(http.StatusCreated)
-			repositories.StationeryAdd(stationery)
-		}
-		json.NewEncoder(w).Encode(data)
+		w.WriteHeader(http.StatusCreated)
 	} else {
-		if message["message"] == "Yetksisiz kullanıcı." {
-			w.WriteHeader(http.StatusForbidden)
-		} else {
-			w.WriteHeader(http.StatusUnauthorized)
-		}
-		json.NewEncoder(w).Encode(message)
+		w.WriteHeader(http.StatusBadRequest)
 	}
+	json.NewEncoder(w).Encode(message)
+
 }
 
+/*
 func UpdateSImage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -156,3 +154,4 @@ func UpdateSImage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+*/
