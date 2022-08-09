@@ -1,35 +1,52 @@
 package service
 
 import (
-	"github.com/daddydemir/kirtasiye-projesi/auth"
-	"github.com/daddydemir/kirtasiye-projesi/models"
-	"github.com/daddydemir/kirtasiye-projesi/repositories"
+	"kirtasiteproject/auth"
+	"kirtasiteproject/models"
+	"kirtasiteproject/repositories"
+	"strconv"
 )
 
-func GetAllUserService(token string) (bool, map[string]string) {
+func AllCustomers(token string) (bool, map[string]interface{}) {
 	status, message := auth.IsValid(token)
 	if status {
-		return true, message
+		nm, durum := repositories.AllCustomers()
+		if durum {
+			message["data"] = nm
+			return true, message
+		} else {
+			return false, message
+		}
 	} else {
 		return false, message
 	}
 }
 
-func GetUserByIdService(token string) (bool, map[string]string) {
+func GetCustomerByUserId(token string, userId string) (bool, map[string]interface{}) {
 	status, message := auth.IsValid(token)
 	if status {
-		return true, message
+		nm, durum := repositories.GetCustomerByUserId(userId)
+		if durum {
+			message["data"] = nm
+			return true, message
+		}
+		return false, message
 	} else {
 		return false, message
 	}
 }
 
-func UpdateUserService(token string, user models.User) (bool, map[string]string) {
+func UpdateCustomer(token string, user models.Customers) (bool, interface{}) {
 	isValid, message := auth.IsValid(token)
 	if isValid {
 		isVal, newMessage := auth.UserAuth(token, user)
 		if isVal {
-			return true, map[string]string{"message": "Güncelleme başarılı."}
+			nm, status := repositories.UpdateCustomer(user)
+			newMessage["data"] = nm
+			if status {
+				return true, newMessage
+			}
+			return false, nil
 		} else {
 			return false, newMessage
 		}
@@ -38,12 +55,17 @@ func UpdateUserService(token string, user models.User) (bool, map[string]string)
 	}
 }
 
-func DeleteUserService(token string, user models.User) (bool, map[string]string) {
+func DeleteCustomer(token string, user models.Customers) (bool, interface{}) {
 	isValid, message := auth.IsValid(token)
 	if isValid {
 		isVal, newMessage := auth.UserAuth(token, user)
 		if isVal {
-			return true, map[string]string{"message": "Silme başarılı."}
+			nm, status := repositories.DeleteCustomer(strconv.Itoa(user.UserId))
+			if status {
+				newMessage["data"] = nm
+				return true, newMessage
+			}
+			return false, nil
 		} else {
 			return false, newMessage
 		}
@@ -52,7 +74,7 @@ func DeleteUserService(token string, user models.User) (bool, map[string]string)
 	}
 }
 
-func UpdateImageService(token string, user models.User) (bool, map[string]string) {
+func UpdateImageService(token string, user models.Customers) (bool, interface{}) {
 	isValid, message := auth.IsValid(token)
 	if isValid {
 		isVal, newMessage := auth.UserAuth(token, user)
@@ -66,11 +88,7 @@ func UpdateImageService(token string, user models.User) (bool, map[string]string
 	}
 }
 
-func AddUserService(user models.User) (bool, map[string]string) {
-	_, status := repositories.UserByName(user.Username)
-	if status {
-		return false, map[string]string{"message": "Bu isme sahip bir kullanıcı zaten var."}
-	} else {
-		return true, map[string]string{"message": "Kullanıcı ismi uygundur."}
-	}
+func AddUserService(user models.Customers) (bool, interface{}) {
+	m, s := repositories.AddCustomer(user)
+	return s, m
 }
