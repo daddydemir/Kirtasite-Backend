@@ -1,5 +1,8 @@
 # Kırtasiye Projesi
 
+
+> Bu projede kullanılan veritabanı büyük ölçüde değiştirildiği için proje [bu adreste](https://github.com/daddydemir/Kirtasite) geliştirilmeye devam etmektedir.
+
 Bu proje;
 
 - Mobil
